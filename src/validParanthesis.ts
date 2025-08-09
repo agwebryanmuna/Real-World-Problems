@@ -42,29 +42,25 @@ Output: false
 const isValid = (s: string): boolean => {
   if (!s || s.length === 1) return false;
 
-  const closingPair = new Map([
-    [")", "("],
-    ["]", "["],
-    ["}", "{"],
-    [">", "<"],
-  ]);
+  const mapping: Record<string, string> = {
+    ")": "(",
+    "}": "{",
+    "]": "[",
+    ">": "<",
+  };
 
-  let valid = false;
+  const stack: string[] = [];
 
-  for (let i = 0; i < s.length; i++) {
-    const openPair = s[i];
-
-    if (
-      openPair === closingPair.get(s[i + 1]!) ||
-      openPair === closingPair.get(s[s.length - (i + 1)]!)
-    ) {
-      valid = true;
-    } else {
-      break;
+  for (const char of s) {
+    if (Object.values(mapping).includes(char)) stack.push(char);
+    else {
+      if (mapping[char] !== stack.pop()) {
+        return false;
+      }
     }
   }
 
-  return valid;
+  return stack.length === 0;
 };
 
 console.log(isValid("()"), "Output: true");
@@ -74,3 +70,4 @@ console.log(isValid("([])"), "Output: true");
 console.log(isValid("([)]"), "Output: false");
 console.log(isValid("([()[])]"), "Output: false");
 console.log(isValid("[(){}<>{}([])]"), "Output: true");
+console.log(isValid("(){}}{"), "Output: false");
